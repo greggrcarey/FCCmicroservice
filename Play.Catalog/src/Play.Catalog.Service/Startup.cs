@@ -14,11 +14,16 @@ using Microsoft.OpenApi.Models;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Serializers;
+using MongoDB.Driver;
+using Play.Catalog.Service.Settings;
+using Play.Catalog.Service.Repositories;
 
 namespace Play.Catalog.Service
 {
     public class Startup
     {
+        private ServiceSettings serviceSettings;
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -32,6 +37,19 @@ namespace Play.Catalog.Service
             //MongoDB settings that save db fields as strings
             BsonSerializer.RegisterSerializer(new GuidSerializer(BsonType.String));
             BsonSerializer.RegisterSerializer(new DateTimeOffsetSerializer(BsonType.String));
+
+            serviceSettings = Configuration.GetSection(nameof(ServiceSettings)).Get<ServiceSettings>();
+
+            //Create single instance of MongoDb for application to use
+            services.AddSingleton(ServiceProvider =>
+            {
+                var mongodbSettings = Configuration.GetSection(nameof(MongoDbSettings)).Get<MongoDbSettings>();
+                var mongoClient = new MongoClient(mongodbSettings.ConnectionString);
+                return mongoClient.GetDatabase(serviceSettings.ServiceName);
+            });
+
+            //Register single instance of concrete repo, which uses single db instance created above.
+            services.AddSingleton<IItemsRepository, ItemsRepository>();
 
             services.AddControllers(options =>
             {

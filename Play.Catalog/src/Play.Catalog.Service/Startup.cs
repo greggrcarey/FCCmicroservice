@@ -17,6 +17,7 @@ using MongoDB.Bson.Serialization.Serializers;
 using MongoDB.Driver;
 using Play.Catalog.Service.Settings;
 using Play.Catalog.Service.Repositories;
+using Play.Catalog.Service.Entities;
 
 namespace Play.Catalog.Service
 {
@@ -49,7 +50,12 @@ namespace Play.Catalog.Service
             });
 
             //Register single instance of concrete repo, which uses single db instance created above.
-            services.AddSingleton<IItemsRepository, ItemsRepository>();
+            //Now that the collection and Type implementation is passed as a ctor parameter, this Singelton is refactored
+            services.AddSingleton<IRepository<Item>>(ServiceProvider =>
+            {
+                var database = ServiceProvider.GetService<IMongoDatabase>();
+                return new MongoRepository<Item>(database, "items");
+            });
 
             services.AddControllers(options =>
             {

@@ -5,6 +5,7 @@
 # Tools Used
 [MongoDb for VS Code](mongodb.mongodb-vscode)
 [Docker Desktop](https://www.docker.com/products/docker-desktop)
+[Docker for VS Code](ms-azuretools.vscode-docker)
 
 # Overview
 Simple WebAPI using ASP.NET 5, MongoDB and Docker to look at containerization in a Windows environment. 
@@ -22,3 +23,9 @@ Create a nuget package
 
 dotnet nuget add source <path> -n Name
 Add a nuget location
+
+docker-compose up -d
+start docker compose in detached mode
+
+Note:
+Switching from docker to docker compose will erase the current volume, even if they are named the same. Should probably make a note of that.

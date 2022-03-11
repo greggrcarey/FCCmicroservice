@@ -16,3 +16,9 @@ name - container name
 p - external to internal port mapping
 v - volume location for persistant data storage after container exit
 mongo - image to use 
+
+dotnet pack -o ..\..\..\packages\
+Create a nuget package
+
+dotnet nuget add source <path> -n Name
+Add a nuget location

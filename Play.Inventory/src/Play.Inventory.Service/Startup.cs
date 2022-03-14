@@ -1,3 +1,4 @@
+using System.Net.Http;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -7,6 +8,7 @@ using Microsoft.OpenApi.Models;
 using Play.Common.MongoDB;
 using Play.Inventory.Service.Clients;
 using Play.Inventory.Service.Entities;
+using Polly;
 
 namespace Play.Inventory.Service
 {
@@ -27,7 +29,9 @@ namespace Play.Inventory.Service
             services.AddHttpClient<CatalogClient>(client =>
             {
                 client.BaseAddress = new System.Uri("https://localhost:5001");
-            });
+            })
+            .AddPolicyHandler(Policy.TimeoutAsync<HttpResponseMessage>(1));
+            //Adds policy to wait 1 second before giving up on request.
 
             services.AddControllers();
             services.AddSwaggerGen(c =>

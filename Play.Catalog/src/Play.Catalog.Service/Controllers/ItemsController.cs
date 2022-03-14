@@ -16,6 +16,7 @@ namespace Play.Catalog.Service.Controllers
     {
 
         private readonly IRepository<Item> _itemsRepository;
+        private static int requestCoutner = 0;
 
         public ItemsController(IRepository<Item> itemsRepository)
         {
@@ -24,11 +25,27 @@ namespace Play.Catalog.Service.Controllers
 
 
         [HttpGet]
-        public async Task<IEnumerable<ItemDto>> Get()
+        public async Task<ActionResult<IEnumerable<ItemDto>>> GetAsync()
         {
+            requestCoutner++;
+            Console.WriteLine($"Request {requestCoutner}: Starting...");
+
+            if (requestCoutner <= 2)
+            {
+                Console.WriteLine($"Request {requestCoutner}: Delaying...");
+                await Task.Delay(TimeSpan.FromSeconds(10));
+            }
+
+            if (requestCoutner <= 4)
+            {
+                Console.WriteLine($"Request {requestCoutner}: 500 (Internal Server Error)");
+                return StatusCode(500);
+            }
+
             var items = (await _itemsRepository.GetAllAsync())
                 .Select(item => item.AsDto());
-            return items;
+            Console.WriteLine($"Request {requestCoutner}: 200(Ok)");
+            return Ok(items);
         }
         [HttpGet("{id}")]
         public async Task<ActionResult<ItemDto>> GetByIdAsync(Guid id)

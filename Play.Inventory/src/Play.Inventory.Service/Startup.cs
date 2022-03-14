@@ -29,13 +29,16 @@ namespace Play.Inventory.Service
         {
             services.AddMongo().AddMongoRepository<InventoryItem>("inventoryitems");
 
+            Random jitter = new Random();
+
             services.AddHttpClient<CatalogClient>(client =>
             {
                 client.BaseAddress = new System.Uri("https://localhost:5001");
             })
             .AddTransientHttpErrorPolicy(builder => builder.Or<TimeoutRejectedException>().WaitAndRetryAsync(
                 5,
-                retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)),
+                retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))
+                + TimeSpan.FromMilliseconds(jitter.Next(0,1000)),
                 onRetry: (outcome, timespan, retryAttempt) =>
                 {
                     var serviceProvider = services.BuildServiceProvider();
@@ -44,7 +47,7 @@ namespace Play.Inventory.Service
                 }
             ))
             .AddPolicyHandler(Policy.TimeoutAsync<HttpResponseMessage>(1));
-            //Builds on previous code to add an exponentially increasing retry.
+            //Builds on previous code to add an exponentially increasing retry plus jitter
             //The service provider here is just for demonstration and should not be used this way in production.
 
             services.AddControllers();

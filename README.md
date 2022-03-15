@@ -29,3 +29,5 @@ start docker compose in detached mode
 
 Note:
 Switching from docker to docker compose will erase the current volume, even if they are named the same. Should probably make a note of that.
+
+Using a Message broker to communicate between Mircoservices will keep services loosely coupled between each other.

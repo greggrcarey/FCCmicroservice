@@ -11,5 +11,18 @@ services:
     volumes:
       - mongodbdata:/data/db
 
+  rabbitmq:
+    image: rabbitmq:management
+    container_name: rabbitmq
+    ports:
+      - 5672:5672
+      - 15672:15672
+    volumes:
+      - rabbitmqdata:/var/lib/rabbitmq
+    hostname: rabbitmq
+# For rabbitmq, defining a host name is important because without one
+# there will be a random name assigend. 
+
 volumes:
   mongodbdata:
+  rabbitmqdata:

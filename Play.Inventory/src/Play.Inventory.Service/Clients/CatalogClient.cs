@@ -15,7 +15,7 @@ namespace Play.Inventory.Service.Clients
             _httpClient = httpClient;
         }
 
-        public async Task<IReadOnlyCollection<CatalogItemDto>> GetCatalogItmesAsync()
+        public async Task<IReadOnlyCollection<CatalogItemDto>> GetCatalogItemsAsync()
         {
             var items = await _httpClient.GetFromJsonAsync<IReadOnlyCollection<CatalogItemDto>>("/items");
             return items;

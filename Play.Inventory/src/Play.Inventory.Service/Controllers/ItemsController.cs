@@ -29,7 +29,7 @@ namespace Play.Inventory.Service.Controllers
             {
                 return BadRequest();
             }
-            var catalogItems = await _catalogClient.GetCatalogItmesAsync();
+            var catalogItems = await _catalogClient.GetCatalogItemsAsync();
             var inventoryItemEntities = await _itemsRepository.GetAllAsync(item => item.UserId == userId);
 
             var inventoryItemDtos = inventoryItemEntities.Select(inventoryItem => 
